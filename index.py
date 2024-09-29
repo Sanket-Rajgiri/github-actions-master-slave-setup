@@ -2,6 +2,10 @@ import json
 import boto3
 import requests
 
+REPO = "REPO_NAME"  # Replace with your GitHub repository name
+OWNER = "REPO_OWNER_NAME"  # Replace with your GitHub repository owner name/organization name
+PARAMETER_NAME = "PARAMETER_NAME"  # Replace with your SSM parameter name
+
 ssm_client = boto3.client('ssm')
 
 def get_parameter(name):
@@ -32,10 +36,9 @@ def get_body(options):
         print(f"HTTP Request error: {str(e)}")
         raise
 
-def remove_runner(repo, instance_id):
-    owner = "REPO_OWNER_NAME"  # Replace with your GitHub repository owner name
+def remove_runner(REPO, instance_id):
     try:
-        password = get_parameter('PARAMETER_NAME')  # Replace with your SSM parameter name
+        password = get_parameter(PARAMETER_NAME) 
     except Exception as e:
         print(f"Error fetching SSM parameter: {str(e)}")
         raise
@@ -45,13 +48,13 @@ def remove_runner(repo, instance_id):
         'Accept': 'application/vnd.github+json',
         'Authorization': auth,
         'X-GitHub-Api-Version': '2022-11-28',
-        'User-Agent': owner
+        'User-Agent': OWNER
     }
     
     try:
         result = get_body({
             'method': 'GET',
-            'url': f'https://api.github.com/repos/{owner}/{repo}/actions/runners',
+            'url': f'https://api.github.com/repos/{OWNER}/{REPO}/actions/runners',
             'headers': headers
         })
         
@@ -64,19 +67,18 @@ def remove_runner(repo, instance_id):
         if off_runners:
             get_body({
                 'method': 'DELETE',
-                'url': f'https://api.github.com/repos/{owner}/{repo}/actions/runners/{off_runners["id"]}',
+                'url': f'https://api.github.com/repos/{OWNER}/{REPO}/actions/runners/{off_runners["id"]}',
                 'headers': headers
             })
-            print(f"GitHub self-hosted runner from EC2 instance {instance_id} removed for repo {repo}")
+            print(f"GitHub self-hosted runner from EC2 instance {instance_id} removed for REPO {REPO}")
         else:
-            print(f"No GitHub self-hosted runner for EC2 instance {instance_id}, skipping for repo {repo}")
+            print(f"No GitHub self-hosted runner for EC2 instance {instance_id}, skipping for REPO {REPO}")
     
     except Exception as e:
         print(f"Error: {str(e)}")
         raise
 
 def lambda_handler(event, context):
-    repo = "REPO_NAME"  # Replace with your GitHub repository name
     print(json.dumps(event))
     
     if event['detail-type'] != 'EC2 Instance Terminate Successful':
@@ -85,6 +87,6 @@ def lambda_handler(event, context):
     instance_id = event['detail']['EC2InstanceId']
     
     try:
-        remove_runner(repo, instance_id)
+        remove_runner(REPO, instance_id)
     except Exception as e:
         print(f"Error executing Lambda function: {str(e)}")
