@@ -1,6 +1,10 @@
 # GitHub Actions Master-Slave Setup with EC2 and Lambda
 
-This project sets up a self-hosted GitHub Actions runner on AWS EC2 instances, with auto-scaling and deregistration capabilities via Lambda and EventBridge.
+This project is a step-by-step approach to building a robust and automated GitHub Actions workflow on AWS using a master-slave architecture. By using EC2 instances for runners and Lambda functions and EventBridge for deregistration, we achieve a highly available and efficient CI/CD pipeline.
+
+## Architecture
+
+![Architecture](docs/Personal%20Projects%20Diagrams%20-%20Github%20Actions%20Master%20Slave%20Setup.png)
 
 ## Prerequisites
 
@@ -421,8 +425,6 @@ jobs:
 1. **Build Time :** By using this setup your build time might increase as we are creating new slave server which takes some time to start. You can overcome this by using bigger instance type for slave server.
 2. **Spot Instances :** Slave servers will run on On-Demand pricing. Marketplace Action that I have used in the above workflow file [`ec2-github-runner`](https://github.com/machulav/ec2-github-runner) does not have support for Spot Instance Allocation as of now. Still In my experience this action is better than the others that are available because it gives us the ability to terminate instances when job is done which seems to be lacking elsewhere.
 
-
 Remember to prioritize security by securely storing credentials and implement robust monitoring and logging for comprehensive visibility and troubleshooting. By continuously refining and adapting this setup to your specific needs, you unlock a powerful and flexible solution for automating your software development lifecycle within the AWS ecosystem.
 
 **Thank you for taking the time to read this guide!** I hope you found it informative and helpful in setting up your own GitHub Actions workflow on AWS. If you have any questions or feedback, please don't hesitate to reach out on [**LinkedIn**](www.linkedin.com/in/sanket-rajgiri). Happy automating!
-    
