@@ -67,7 +67,7 @@ Create a security group that allows:
 
 ### Step 5. Create an EC2 Launch Template
 
-Create a launch template that uses the IAM role and security group from the previous steps. Ensure that the option to **Auto-assign Public IP** is enabled from **Advenced Network Cofiguration** during creation.
+Create a launch template that uses the IAM role and security group from the previous steps. Ensure that the option to **Auto-assign Public IP** is enabled from **Advanced Network Configuration** during creation.
 
 Use the following user data script for configuring the EC2 instance as a GitHub runner using Amazon Linux AMIs :
 
